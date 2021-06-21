@@ -1,17 +1,15 @@
 <template>
   <div class="dashboard">
       <Menu/>
-      <home/>
+      <router-view/>
   </div>
 </template>
 
 <script>
-import Home from '../components/Home.vue'
 import Menu from '../components/Menu.vue'
 export default {
     components: {
-        Menu,
-        Home
+        Menu
     }
 }
 </script>

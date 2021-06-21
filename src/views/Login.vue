@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     signIn() {
-      this.$router.push("/dashboard")
+      this.$router.push("/dashboard/Home")
     }
   }
 }
