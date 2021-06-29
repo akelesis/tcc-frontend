@@ -3,11 +3,11 @@
     <div class="upside-block">
         <h2>Menu</h2>
         <ul>
-            <li class="menu-item" @click="redirectRooms">Salas <i class="fas fa-door-open"></i></li>
-            <li class="menu-item">Disciplinas <i class="fas fa-book"></i></li>
-            <li class="menu-item">Turmas <i class="fas fa-users"></i></li>
-            <li class="menu-item">Professores <i class="fas fa-chalkboard-teacher"></i></li>
-            <li class="menu-item">Horários <i class="fas fa-calendar-check"></i></li>
+            <li ref="rooms" class="menu-item" @click="redirect('rooms')">Salas <i class="fas fa-door-open"></i></li>
+            <li ref="subjects" class="menu-item" @click="redirect('subjects')">Disciplinas <i class="fas fa-book"></i></li>
+            <li ref="classes" class="menu-item" @click="redirect('classes')">Turmas <i class="fas fa-users"></i></li>
+            <li ref="professors" class="menu-item" @click="redirect('professors')">Professores <i class="fas fa-chalkboard-teacher"></i></li>
+            <li ref="time" class="menu-item" @click="redirect('schedule')">Horários <i class="fas fa-calendar-check"></i></li>
         </ul>
     </div>
     <div class="user-card">
@@ -25,10 +25,20 @@ export default {
             nome: "Hélder"
         }
     },
-    methods: { 
-        redirectRooms() {
-            this.$router.push('/dashboard/rooms')
-        }
+    methods: {
+        clearSelection() {
+            this.$refs.rooms.classList.value = "menu-item"
+            this.$refs.subjects.classList.value = "menu-item"
+            this.$refs.classes.classList.value = "menu-item"
+            this.$refs.professors.classList.value = "menu-item"
+            this.$refs.time.classList.value = "menu-item"
+        },
+        redirect(item) {
+            this.$router.push(`/dashboard/${item}`)
+            this.clearSelection()
+            this.$refs[item].classList.value = "menu-item-selected"
+        },
+
     }
 };
 </script>
@@ -44,6 +54,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  box-shadow: 5px 3px 10px #777;
 }
 
 .menu h2 {
@@ -66,6 +77,16 @@ export default {
 
 .menu-item:hover {
     filter: brightness(110%);
+}
+
+.menu-item-selected {
+    background-color: #fff;
+    color: #41687e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 30px;
+    padding: 5px 30px;
 }
 
 .user-card {

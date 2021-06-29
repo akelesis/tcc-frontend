@@ -7,25 +7,31 @@
       <div class="rooms-list-container">
         <table width="100%">
           <thead>
-            <th width="20%">Código</th>
+            <th width="10%">Código</th>
             <th width="20%">Nome</th>
+            <th width="20%">Tipo</th>
             <th width="20%">Capacidade</th>
             <th width="20%">Estações</th>
-            <th width="20%">Ações</th>
+            <th width="10%">Ações</th>
           </thead>
           <tbody>
             <tr
-              :class="rooms.indexOf(room) % 2 == 0 ? even : ''"
-              v-for="room in rooms"
-              :key="room.id"
+              :class="rooms.indexOf(element) % 2 == 0 ? even : ''"
+              v-for="element in rooms"
+              :key="element.id"
             >
-              <td>{{ room.id }}</td>
-              <td>{{ room.name }}</td>
-              <td>{{ room.capacity }}</td>
-              <td>{{ room.stations }}</td>
+              <td>{{ element.room_id }}</td>
+              <td>{{ element.name }}</td>
+              <td>{{ element.type }}</td>
+              <td>{{ element.capacity }}</td>
+              <td>{{ element.terminals_quantity }}</td>
               <td class="room-actions">
-                <button class="edit-btn"><i class="fas fa-pencil-alt"></i></button>
-                <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                <button class="edit-btn" @click="editRoom(element.room_id)">
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="delete-btn" @click="deleteRoom(element.room_id)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -39,43 +45,87 @@
         </div>
         <div class="room-register-body">
           <div>
-            <input class="register-inputs" type="text" placeholder="Nome" />
-            <input class="register-inputs" type="text" placeholder="Capacidade" />
-            <input class="register-inputs" type="text" placeholder="Estações" />
-            <button class="register-btn">Salvar</button>
+            <div class="input-group">
+              <input class="register-inputs" v-model="room.name" type="text" placeholder="Nome" />
+              <select name="type" v-model="room.type" class="register-inputs">
+                <option value="" disabled selected>Tipo</option>
+                <option value="Laboratório">Laboratório</option>
+                <option value="Sala">Sala</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <input
+                class="register-inputs"
+                type="text"
+                v-model="room.capacity"
+                placeholder="Capacidade"
+              />
+              <input
+                class="register-inputs"
+                type="text"
+                v-model="room.terminals_quantity"
+                placeholder="Estações"
+              />
+            </div>
           </div>
         </div>
+        <button class="register-btn" v-if="saveMode" @click="postRoom">Salvar</button>
+        <button class="register-btn" v-if="!saveMode" @click="putRoom">Atualizar</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import { baseUrl, clearForms } from "../global";
 export default {
   data() {
     return {
-      rooms: [
-        {
-          id: 1,
-          name: "17B",
-          capacity: 30,
-          stations: 20,
-        },
-        {
-          id: 2,
-          name: "18B",
-          capacity: 30,
-          stations: 20,
-        },
-        {
-          id: 3,
-          name: "16B",
-          capacity: 25,
-          stations: 16,
-        },
-      ],
+      rooms: [],
+      room: {
+        type: ""
+      },
       even: "even",
+      saveMode: true
     };
+  },
+  methods: {
+    async getRooms() {
+      try {
+        this.rooms = await axios
+          .get(`${baseUrl}/rooms`)
+          .then((res) => res.data);
+      } catch (err) {
+        alert(
+          "Não foi possível carregar as salas, tente novamente mais tarde."
+        );
+      }
+    },
+    async postRoom() {
+      await axios.post(`${baseUrl}/rooms`, this.room)
+        .then(() => this.getRooms())
+        .then(() => this.room = clearForms({type: ""}));
+    },
+    editRoom(roomId) {
+      console.log(roomId)
+      const aux = this.rooms.find(room => room.room_id == roomId)
+      this.room = {...aux}
+      this.saveMode = false
+    },
+    async putRoom(){
+      await axios.put(`${baseUrl}/rooms/${this.room.room_id}`, this.room)
+        .then(() => this.getRooms())
+        .then(() => this.clearForm());
+    },
+     async deleteRoom(roomId) {
+        await axios.delete(`${baseUrl}/rooms/${roomId}`)
+            .then(() => this.getRooms())
+    }
+
+  },
+  mounted() {
+    this.getRooms();
   },
 };
 </script>
@@ -147,7 +197,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-family: 'Titillium Web', sans-serif;
+  font-family: "Titillium Web", sans-serif;
 }
 
 .room-register-body {
@@ -160,56 +210,68 @@ export default {
 
 .room-register-body div {
   display: flex;
-  justify-content: space-around;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 0 5px 0;
 }
 
 .register-inputs {
-    border: none;
-    border-bottom: 1px solid #41687E;
-    font-size: 23px;
-    background: #0000;
-    font-family: 'Titillium Web', sans-serif;
+  border: none;
+  border-bottom: 1px solid #41687e;
+  font-size: 23px;
+  background: #0000;
+  font-family: "Titillium Web", sans-serif;
 }
 
 .register-btn {
-    background-color: #41687E;
-    border: none;
-    padding: 5px 10px;
-    font-family: 'Titillium Web', sans-serif;
-    font-size: 20px;
-    color: #fff;
-    cursor: pointer;
-    transition: 0.2s;
+  background-color: #41687e;
+  border: none;
+  padding: 5px 10px;
+  font-family: "Titillium Web", sans-serif;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+  margin: 5px;
+  width: 100px;
 }
 
 .room-actions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.edit-btn, .delete-btn {
-    margin: 0 5px;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-    transition: .2s;
+.edit-btn,
+.delete-btn {
+  margin: 0 5px;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .edit-btn {
-    background-color: #41687E;
-    color: #FFF;
-    border: none;
-    
+  background-color: #41687e;
+  color: #fff;
+  border: none;
 }
 
 .delete-btn {
-    color: #41687E;
-    background-color: #FFF0;
-    border: 1px solid #41687E;
+  color: #41687e;
+  background-color: #fff0;
+  border: 1px solid #41687e;
 }
 
-.edit-btn:hover, .delete-btn:hover, .register-btn:hover {
-    filter: brightness(120%);
+.edit-btn:hover,
+.delete-btn:hover,
+.register-btn:hover {
+  filter: brightness(120%);
 }
 </style>
