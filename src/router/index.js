@@ -45,6 +45,11 @@ const routes = [
         name: 'Schedule',
         component: () => import('../components/Schedule.vue')
       },
+      {
+        path: '/dashboard/schedule/create',
+        name: 'ScheduleCreate',
+        component: () => import('../components/ScheduleForm.vue')
+      },
     ]
   }
 ]

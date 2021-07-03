@@ -7,7 +7,7 @@
             <li ref="subjects" class="menu-item" @click="redirect('subjects')">Disciplinas <i class="fas fa-book"></i></li>
             <li ref="classes" class="menu-item" @click="redirect('classes')">Turmas <i class="fas fa-users"></i></li>
             <li ref="professors" class="menu-item" @click="redirect('professors')">Professores <i class="fas fa-chalkboard-teacher"></i></li>
-            <li ref="time" class="menu-item" @click="redirect('schedule')">Horários <i class="fas fa-calendar-check"></i></li>
+            <li ref="schedule" class="menu-item" @click="redirect('schedule')">Horários <i class="fas fa-calendar-check"></i></li>
         </ul>
     </div>
     <div class="user-card">

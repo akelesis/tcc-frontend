@@ -7,11 +7,11 @@
       <div class="classes-list-container">
         <table width="100%">
           <thead>
-            <th width="20%">Código</th>
+            <th width="10%">Código</th>
             <th width="10%">Semestre</th>
             <th width="20%">Disciplina</th>
-            <th width="20%">Descrição</th>
-            <th width="20%">Professor</th>
+            <th width="15%">Descrição</th>
+            <th width="35%">Professor</th>
             <th width="10%">Ações</th>
           </thead>
           <tbody>
@@ -46,18 +46,10 @@
         <div class="class-register-body">
           <div>
             <div class="input-group">
-                <select class="register-inputs" name="semester" id="">
-                  <option value="" disabled selected>Semestre</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-              </select>
-              <select class="register-inputs" name="subject" id="">
+                <input type="text" class="register-inputs" v-model="period" placeholder="Ano e periodo letivo" name="" id="">
+              <select class="register-inputs" v-model="targetClass.subject_id" name="subject" id="">
                   <option value="" disabled selected>Disciplina</option>
-                  <option value="PAA">Projeto e Análise de Algoritmos</option>
-                  <option value="CG">Computação Gráfica</option>
+                  <option v-for="subject in subjects" :key="subject.subject_id" :value="subject.subject_id">{{subject.subject_name}}</option>
               </select>
             </div>
             <div class="input-group">
@@ -65,14 +57,15 @@
                 class="register-inputs"
                 type="text"
                 placeholder="Descrição"
+                v-model="targetClass.description"
               />
-              <select class="register-inputs" name="professor" id="">
+              <select class="register-inputs" v-model="professorId" name="professor" id="">
                   <option value="" disabled selected>Professor</option>
-                  <option value="Paulo André Sperandio Giacomin">Paulo André Sperandio Giacomin</option>
+                  <option v-for="professor in professors" :key="professor.professor_id" :value="professor.professor_id">{{professor.professor_name}}</option>
               </select>
             </div>
           </div>
-          <button class="register-btn">Salvar</button>
+          <button class="register-btn" @click="postClass">Salvar</button>
         </div>
       </div>
     </div>
@@ -81,13 +74,21 @@
 
 <script>
 import axios from 'axios'
-import {baseUrl} from '../global'
+import {baseUrl, clearForms} from '../global'
 
 export default {
     data() {
         return {
             classes: [],
-            even: "even"
+            targetClass: {
+                college_semester: "",
+                subject_id: ""
+            },
+            professorId: "",
+            professors: [],
+            subjects: [],
+            even: "even",
+            period: ""
         }
     },
     methods: {
@@ -99,10 +100,40 @@ export default {
       catch(err) {
         alert("Não foi possível carregar os professores, tente novamente mais tarde.")
       }
+    },
+    async getProfessors() {
+        try {
+            this.professors = await axios.get(`${baseUrl}/professors`).then(res => res.data)
+        }
+        catch(err) {
+            console.log(err)
+        }
+    },
+    async getSubjects() {
+        try {
+            this.subjects = await axios.get(`${baseUrl}/subjects`).then(res => res.data)
+        }
+        catch(err) {
+            console.log(err)
+        }
+    },
+    async postClass() {
+        try {
+            const class_id = await axios.post(`${baseUrl}/classes`, this.targetClass).then(res => res.data)
+            const professor_id = this.professorId
+            await axios.post(`${baseUrl}/professor_classes`, {class_id, professor_id})
+            this.getClasses()
+            this.targetClass = clearForms({college_semester: "", subject_id: ""})
+        }
+        catch(err) {
+            console.log(err)
+        }
     }
   },
   mounted() {
     this.getClasses()
+    this.getProfessors()
+    this.getSubjects()
   }
 }
 </script>
