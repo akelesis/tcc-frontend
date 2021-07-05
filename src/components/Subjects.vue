@@ -75,6 +75,7 @@
                 id=""
               >
                 <option value="" disabled selected>Carga Horária</option>
+                <option value="30">30h</option>
                 <option value="45">45h</option>
                 <option value="60">60h</option>
                 <option value="75">75h</option>
@@ -207,6 +208,8 @@ export default {
   width: 65vw;
   min-height: 400px;
   background-color: #e8e8e8;
+  max-height: 400px;
+  overflow-y: auto;
 }
 .subjects-list-container thead {
   font-size: 25px;

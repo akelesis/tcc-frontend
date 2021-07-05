@@ -29,7 +29,7 @@
                 <button class="edit-btn">
                   <i class="fas fa-pencil-alt"></i>
                 </button>
-                <button class="delete-btn">
+                <button class="delete-btn" @click="deleteClass(collegeClass)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </td>
@@ -46,7 +46,7 @@
         <div class="class-register-body">
           <div>
             <div class="input-group">
-                <input type="text" class="register-inputs" v-model="period" placeholder="Ano e periodo letivo" name="" id="">
+                <input type="text" class="register-inputs" v-model="targetClass.college_semester" placeholder="Ano e periodo letivo" name="" id="">
               <select class="register-inputs" v-model="targetClass.subject_id" name="subject" id="">
                   <option value="" disabled selected>Disciplina</option>
                   <option v-for="subject in subjects" :key="subject.subject_id" :value="subject.subject_id">{{subject.subject_name}}</option>
@@ -88,7 +88,6 @@ export default {
             professors: [],
             subjects: [],
             even: "even",
-            period: ""
         }
     },
     methods: {
@@ -128,6 +127,10 @@ export default {
         catch(err) {
             console.log(err)
         }
+    },
+    async deleteClass(collegeClass) {
+      await axios.delete(`${baseUrl}/classes/${collegeClass.class_id}`)
+      this.getClasses()
     }
   },
   mounted() {
@@ -150,6 +153,11 @@ export default {
   display: flex;
   justify-content: flex-start;
   width: 75%;
+}
+
+.classes-list-box {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .classes-title-box h1 {

@@ -45,7 +45,7 @@
           >
             <td>{{ schedule.time }}</td>
             <td v-for="day in schedule.days" :key="day.day">
-              {{ day.subject }}
+              {{ day.subject_name }}
             </td>
           </tr>
         </tbody>
@@ -62,12 +62,6 @@
         </thead>
         <tbody>
           <tr>
-            <td>
-              <div :class="color[0]" class="color-container"></div>
-            </td>
-            <td>TAC I</td>
-            <td>Turma 1</td>
-            <td>Elinaldo Junior</td>
           </tr>
         </tbody>
       </table>
@@ -85,22 +79,18 @@ export default {
       color: ["orange"],
       schedules: [
         {
-          semester: "1",
           time: "7:30",
           days: [],
         },
         {
-          semester: "1",
           time: "8:20",
           days: [],
         },
         {
-          semester: "1",
           time: "9:10",
           days: [],
         },
         {
-          semester: "1",
           time: "10:50",
           days: [],
         },
@@ -110,37 +100,30 @@ export default {
           days: [],
         },
         {
-          semester: "1",
           time: "12:30",
           days: [],
         },
         {
-          semester: "1",
           time: "13:30",
           days: [],
         },
         {
-          semester: "1",
           time: "14:20",
           days: [],
         },
         {
-          semester: "1",
           time: "15:10",
           days: [],
         },
         {
-          semester: "1",
           time: "16:00",
           days: [],
         },
         {
-          semester: "1",
           time: "16:50",
           days: [],
         },
         {
-          semester: "1",
           time: "17:40",
           days: [],
         },
